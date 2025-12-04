@@ -109,16 +109,16 @@ export default function AdminDepositsPage() {
       </div>
 
       {/* Deposit Address Info */}
-      <Trc20DepositPanel />
+        <Trc20DepositPanel />
 
       {/* Loading State */}
-      {isLoading && (
-        <div className="space-y-3">
-          {[1, 2, 3].map((i) => (
+          {isLoading && (
+            <div className="space-y-3">
+              {[1, 2, 3].map((i) => (
             <Skeleton key={i} className="h-32 sm:h-20 w-full bg-slate-800/50 rounded-2xl" />
-          ))}
-        </div>
-      )}
+              ))}
+            </div>
+          )}
 
       {/* Error State */}
       {isError && (
@@ -149,7 +149,7 @@ export default function AdminDepositsPage() {
               </div>
               <p className="text-slate-300 text-lg font-medium">All caught up!</p>
               <p className="text-slate-500 text-sm mt-1">No pending deposits to review</p>
-            </div>
+                </div>
           </CardContent>
         </Card>
       )}
@@ -181,9 +181,9 @@ export default function AdminDepositsPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-800/30">
-                    {deposits.map((deposit) => (
+                {deposits.map((deposit) => (
                       <tr 
-                        key={deposit.id} 
+                    key={deposit.id}
                         className="hover:bg-slate-900/40 transition-colors"
                       >
                         <td className="px-4 py-4">
@@ -197,7 +197,7 @@ export default function AdminDepositsPage() {
                               <p className="text-sm font-medium text-slate-50">{deposit.user.email}</p>
                               <p className="text-xs text-slate-500">User ID: {deposit.user.id}</p>
                             </div>
-                          </div>
+                      </div>
                         </td>
                         <td className="px-4 py-4">
                           <div className="flex items-center gap-2">
@@ -209,7 +209,7 @@ export default function AdminDepositsPage() {
                               {formatBalance(deposit.amount)}
                             </span>
                             <span className="text-xs text-slate-500">USDT</span>
-                          </div>
+                      </div>
                         </td>
                         <td className="px-4 py-4">
                           <div className="flex items-center gap-2">
@@ -225,33 +225,33 @@ export default function AdminDepositsPage() {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                               </svg>
                             </button>
-                          </div>
+                      </div>
                         </td>
                         <td className="px-4 py-4">
                           <p className="text-sm text-slate-400">{formatDate(deposit.createdAt)}</p>
                         </td>
                         <td className="px-4 py-4">
                           <div className="flex items-center justify-end gap-2">
-                            <Button
-                              onClick={() => approveMutation.mutate(deposit.id)}
+                        <Button
+                          onClick={() => approveMutation.mutate(deposit.id)}
                               disabled={approveMutation.isPending || rejectMutation.isPending}
                               size="sm"
                               className="h-8 px-4 rounded-full text-xs font-semibold bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 transition-all"
-                            >
-                              {approveMutation.isPending && approveMutation.variables === deposit.id
+                        >
+                          {approveMutation.isPending && approveMutation.variables === deposit.id
                                 ? 'Approving...'
-                                : 'Approve'}
-                            </Button>
-                            <Button
-                              onClick={() => rejectMutation.mutate(deposit.id)}
+                            : 'Approve'}
+                        </Button>
+                        <Button
+                          onClick={() => rejectMutation.mutate(deposit.id)}
                               disabled={approveMutation.isPending || rejectMutation.isPending}
                               size="sm"
                               className="h-8 px-4 rounded-full text-xs font-medium bg-red-500/10 hover:bg-red-500/20 text-red-300 border border-red-500/30 transition-all"
-                            >
-                              {rejectMutation.isPending && rejectMutation.variables === deposit.id
+                        >
+                          {rejectMutation.isPending && rejectMutation.variables === deposit.id
                                 ? 'Rejecting...'
-                                : 'Reject'}
-                            </Button>
+                            : 'Reject'}
+                        </Button>
                           </div>
                         </td>
                       </tr>
@@ -371,8 +371,8 @@ export default function AdminDepositsPage() {
           <div className="space-y-3">
             {[1, 2, 3].map((i) => (
               <Skeleton key={i} className="h-20 w-full bg-slate-800/50 rounded-2xl" />
-            ))}
-          </div>
+                  ))}
+                </div>
         )}
 
         {/* Empty State */}
@@ -508,8 +508,8 @@ export default function AdminDepositsPage() {
                     <div className="text-xs text-slate-500">
                       <span className="font-mono">{shortenTxHash(deposit.txHash)}</span>
                     </div>
-                  </CardContent>
-                </Card>
+        </CardContent>
+      </Card>
               ))}
             </div>
           </>

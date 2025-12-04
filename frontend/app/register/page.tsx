@@ -71,7 +71,7 @@ export default function RegisterPage() {
             Create your account
           </CardTitle>
           <CardDescription className="text-xs text-slate-400">
-            Join the automated crypto investment platform.
+            Join the automated investment platform.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">

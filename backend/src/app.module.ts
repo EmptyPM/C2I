@@ -13,6 +13,7 @@ import { ReferralsModule } from './referrals/referrals.module';
 import { MailModule } from './mail/mail.module';
 import { WalletModule } from './wallet/wallet.module';
 import { ForexModule } from './forex/forex.module';
+import { SettingsModule } from './settings/settings.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { ForexModule } from './forex/forex.module';
     MailModule,
     WalletModule,
     ForexModule,
+    SettingsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -3,16 +3,30 @@
 import { useState } from "react";
 import Image from "next/image";
 import QRCode from "react-qr-code";
-import { TRC20_DEPOSIT_ADDRESS } from "@/config/deposit";
+import { useQuery } from "@tanstack/react-query";
+import { api } from "@/lib/api-client";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+
+const fetchDepositAddress = async (): Promise<{ address: string }> => {
+  const res = await api.get('/settings/deposit-address');
+  return res.data;
+};
 
 export function Trc20DepositPanel() {
   const [copied, setCopied] = useState(false);
 
+  const { data: addressData, isLoading } = useQuery({
+    queryKey: ['depositAddress'],
+    queryFn: fetchDepositAddress,
+  });
+
+  const depositAddress = addressData?.address || 'TRX2r4BUhMd22W8DtwNEajhRcgPJWBK4s7';
+
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(TRC20_DEPOSIT_ADDRESS);
+      await navigator.clipboard.writeText(depositAddress);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
@@ -46,34 +60,44 @@ export function Trc20DepositPanel() {
 
       {/* Middle: QR + address */}
       <CardContent className="space-y-4">
-        <div className="flex flex-col items-center gap-4 md:flex-row md:items-center md:gap-8">
-          {/* QR */}
-          <div className="rounded-2xl border border-slate-700/60 bg-slate-900/80 px-4 py-4 shadow-[0_18px_45px_rgba(15,23,42,0.85)]">
-            <QRCode
-              value={TRC20_DEPOSIT_ADDRESS}
-              size={132}
-              bgColor="transparent"
-              fgColor="#ffffff"
-            />
-          </div>
-
-          {/* Address */}
-          <div className="flex-1 space-y-2">
-            <p className="text-xs font-semibold text-slate-300">Address</p>
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-              <div className="flex-1 rounded-lg bg-slate-900 border border-slate-700 px-3 py-2 text-xs text-slate-100 break-all">
-                {TRC20_DEPOSIT_ADDRESS}
-              </div>
-              <button
-                type="button"
-                onClick={handleCopy}
-                className="mt-1 sm:mt-0 h-8 px-4 rounded-full border border-slate-700 bg-slate-900/80 text-slate-200 hover:bg-slate-800 hover:text-white hover:border-slate-600 whitespace-nowrap text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500 disabled:opacity-50 disabled:pointer-events-none"
-              >
-                {copied ? "Copied" : "Copy"}
-              </button>
+        {isLoading ? (
+          <div className="flex flex-col items-center gap-4 md:flex-row md:items-center md:gap-8">
+            <Skeleton className="h-[164px] w-[164px] rounded-2xl bg-slate-800/50" />
+            <div className="flex-1 space-y-2 w-full">
+              <Skeleton className="h-4 w-16 bg-slate-800/50" />
+              <Skeleton className="h-10 w-full bg-slate-800/50 rounded-lg" />
             </div>
           </div>
-        </div>
+        ) : (
+          <div className="flex flex-col items-center gap-4 md:flex-row md:items-center md:gap-8">
+            {/* QR */}
+            <div className="rounded-2xl border border-slate-700/60 bg-slate-900/80 px-4 py-4 shadow-[0_18px_45px_rgba(15,23,42,0.85)]">
+              <QRCode
+                value={depositAddress}
+                size={132}
+                bgColor="transparent"
+                fgColor="#ffffff"
+              />
+            </div>
+
+            {/* Address */}
+            <div className="flex-1 space-y-2">
+              <p className="text-xs font-semibold text-slate-300">Address</p>
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                <div className="flex-1 rounded-lg bg-slate-900 border border-slate-700 px-3 py-2 text-xs text-slate-100 break-all">
+                  {depositAddress}
+                </div>
+                <button
+                  type="button"
+                  onClick={handleCopy}
+                  className="mt-1 sm:mt-0 h-8 px-4 rounded-full border border-slate-700 bg-slate-900/80 text-slate-200 hover:bg-slate-800 hover:text-white hover:border-slate-600 whitespace-nowrap text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500 disabled:opacity-50 disabled:pointer-events-none"
+                >
+                  {copied ? "Copied" : "Copy"}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Bottom: instructions */}
         <div className="rounded-xl bg-slate-900/70 border border-slate-800 px-3 py-3 text-[11px] leading-relaxed text-slate-300 space-y-1.5">

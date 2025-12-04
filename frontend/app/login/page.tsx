@@ -51,7 +51,7 @@ export default function LoginPage() {
             Welcome back
           </CardTitle>
           <CardDescription className="text-xs text-slate-400">
-            Sign in to access your crypto investment dashboard.
+            Sign in to access your investment dashboard.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">

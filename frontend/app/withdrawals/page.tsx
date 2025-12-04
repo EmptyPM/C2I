@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
+import { useState, useEffect, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api-client';
@@ -30,14 +30,37 @@ const formatBalance = (value: string | number): string => {
   return isNaN(num) ? '0.00' : num.toFixed(2);
 };
 
+const formatDate = (dateString: string): string => {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+};
+
 export default function WithdrawalsPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { data: user, isLoading: userLoading } = useCurrentUser();
+  const [mounted, setMounted] = useState(false);
 
   const [amount, setAmount] = useState('');
   const [source, setSource] = useState<'PROFIT' | 'REFERRAL'>('PROFIT');
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Redirect if not authenticated
+  useEffect(() => {
+    if (!userLoading && !user) {
+      router.push('/login');
+    }
+  }, [user, userLoading, router]);
 
   const { data: withdrawals, isLoading: withdrawalsLoading } = useQuery({
     queryKey: ['myWithdrawals'],
@@ -93,18 +116,27 @@ export default function WithdrawalsPage() {
     });
   };
 
-  // Redirect if not authenticated
-  if (!userLoading && !user) {
-    router.push('/login');
-    return null;
-  }
-
   const availableProfitBalance = user
     ? parseFloat(String(user.profitBalance))
     : 0;
   const availableReferralBalance = user
     ? parseFloat(String(user.referralBalance))
     : 0;
+
+  // Show loading while checking authentication
+  if (userLoading || (!user && mounted)) {
+    return (
+      <main className="min-h-screen bg-slate-950 text-slate-50">
+        <div className="max-w-4xl mx-auto px-4 py-8">
+          <div className="space-y-6">
+            <Skeleton className="h-10 w-48 bg-slate-800" />
+            <Skeleton className="h-64 w-full bg-slate-800 rounded-2xl" />
+            <Skeleton className="h-48 w-full bg-slate-800 rounded-2xl" />
+          </div>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-slate-950 text-slate-50">
@@ -257,7 +289,7 @@ export default function WithdrawalsPage() {
                           className="grid grid-cols-6 gap-4 py-3 border-b border-slate-800/50 text-sm items-center"
                         >
                           <div className="text-white">
-                            {new Date(withdrawal.createdAt).toLocaleString()}
+                            {mounted ? formatDate(withdrawal.createdAt) : 'Loading...'}
                           </div>
                           <div>
                             <span
@@ -291,9 +323,9 @@ export default function WithdrawalsPage() {
                             >
                               {withdrawal.status}
                             </span>
-                            {withdrawal.processedAt && (
+                            {mounted && withdrawal.processedAt && (
                               <p className="text-xs text-slate-500 mt-1">
-                                {new Date(withdrawal.processedAt).toLocaleDateString()}
+                                {formatDate(withdrawal.processedAt)}
                               </p>
                             )}
                           </div>

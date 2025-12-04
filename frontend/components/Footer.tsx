@@ -7,7 +7,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
           {/* Company Info */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-slate-50">Crypto Investment Platform</h3>
+            <h3 className="text-lg font-semibold text-slate-50">Fynex</h3>
             <p className="text-sm text-slate-400">
               Advanced cryptocurrency investment solutions with automated trading and real-time analytics.
             </p>
@@ -25,11 +25,6 @@ export default function Footer() {
               <li>
                 <a href="/account" className="text-slate-400 transition-colors hover:text-slate-200">
                   Account
-                </a>
-              </li>
-              <li>
-                <a href="/referral" className="text-slate-400 transition-colors hover:text-slate-200">
-                  Referral Program
                 </a>
               </li>
               <li>
@@ -66,7 +61,7 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="mt-8 border-t border-slate-800 pt-8">
           <div className="flex flex-col items-center justify-between gap-4 text-sm text-slate-400 md:flex-row">
-            <p>&copy; {currentYear} Crypto Investment Platform. All rights reserved.</p>
+            <p>&copy; {currentYear} Fynex. All rights reserved.</p>
             <p className="text-xs">
               Trading cryptocurrencies carries risk. Past performance does not guarantee future results.
             </p>

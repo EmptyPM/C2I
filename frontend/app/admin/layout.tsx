@@ -12,6 +12,7 @@ const adminNavItems = [
   { label: 'Deposits', href: '/admin/deposits' },
   { label: 'Withdrawals', href: '/admin/withdrawals' },
   { label: 'Profits', href: '/admin/profits' },
+  { label: 'Settings', href: '/admin/settings' },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

@@ -1,24 +1,31 @@
 # Node
 node_modules/
 
-# Env files
-**/.env
-**/.env.local
+# Env files (DO NOT UPLOAD THESE)
+frontend/.env
+frontend/.env.local
+backend/.env
+backend/.env.local
 
-# Next.js build
+# Build files
 frontend/.next/
 frontend/out/
-
-# NestJS build
 backend/dist/
 
-# SQLite dev DB
+# Uploads
+backend/uploads/
+
+# Prisma
 backend/prisma/dev.db
 backend/prisma/dev.db-journal
 
 # Logs
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
 # OS files
 .DS_Store
+Thumbs.db
 

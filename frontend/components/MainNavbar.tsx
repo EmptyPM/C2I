@@ -3,8 +3,9 @@
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { useCallback } from "react";
+import { api } from "@/lib/api-client";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,11 +21,20 @@ import {
 } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 
+const fetchLogo = async (): Promise<{ logoUrl: string | null }> => {
+  const res = await api.get('/settings/logo');
+  return res.data;
+};
+
 export default function MainNavbar() {
   const router = useRouter();
   const pathname = usePathname();
   const queryClient = useQueryClient();
   const { data: user } = useCurrentUser();
+  const { data: logoData } = useQuery({
+    queryKey: ['platformLogo'],
+    queryFn: fetchLogo,
+  });
 
   const handleLogout = useCallback(() => {
     // same logic you had earlier for logout
@@ -45,25 +55,33 @@ export default function MainNavbar() {
       <div className="mx-auto flex h-14 items-center justify-between px-4 rounded-2xl border border-slate-800/70 bg-slate-950/90 backdrop-blur shadow-lg" style={{ maxWidth: '1280px' }}>
         {/* LEFT: logo */}
         <Link href="/" className="flex items-center gap-2">
-          {/* Logo */}
-          <div className="flex items-center justify-center h-8 w-8 rounded-lg bg-gradient-to-br from-sky-400 to-blue-600">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="h-5 w-5 text-white"
-            >
-              <path d="M12 2L2 7l10 5 10-5-10-5z" />
-              <path d="M2 17l10 5 10-5M2 12l10 5 10-5" />
-            </svg>
-          </div>
-          <span className="text-sm font-semibold tracking-tight text-slate-100">
-            Crypto Invest
-          </span>
+          {/* Logo - Display uploaded logo or fallback to text logo */}
+          {logoData?.logoUrl ? (
+            <img 
+              src={`http://localhost:4000${logoData.logoUrl}`}
+              alt="Fynex Logo"
+              className="h-8 object-contain"
+            />
+          ) : (
+            <div className="flex items-center">
+              <span className="text-xl font-bold tracking-tight" style={{ 
+                background: 'linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text'
+              }}>
+                FYNEX
+              </span>
+              {/* Upward arrow accent */}
+              <svg 
+                className="h-4 w-4 text-cyan-400 ml-0.5 -mt-1" 
+                fill="currentColor" 
+                viewBox="0 0 20 20"
+              >
+                <path fillRule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clipRule="evenodd" />
+              </svg>
+            </div>
+          )}
         </Link>
 
         {/* RIGHT: nav items + auth area */}

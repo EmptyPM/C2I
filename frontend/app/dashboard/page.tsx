@@ -510,7 +510,7 @@ export default function DashboardPage() {
             </div>
 
             {/* Live Trading Console */}
-            <TradingSimulationConsole />
+              <TradingSimulationConsole />
           </section>
 
           {/* Bot Programs Teaser Section */}

@@ -26,9 +26,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <div className="min-h-screen bg-gradient-to-br from-[#05081a] via-[#05081a] to-[#25144a]">
               {/* ---- CONTAINER LOGIC ---- */}
               {/* All pages: 1280px centered */}
-              <div className="mx-auto w-full max-w-[1280px] px-4 py-6 md:py-8">
-                {children}
-              </div>
+                <div className="mx-auto w-full max-w-[1280px] px-4 py-6 md:py-8">
+                  {children}
+                </div>
             </div>
           </div>
           {/* Footer */}

@@ -112,16 +112,16 @@ export default function AdminWithdrawalsPage() {
       </div>
 
       {/* Loading State */}
-      {isLoading && (
-        <div className="space-y-3">
-          {[1, 2, 3].map((i) => (
+          {isLoading && (
+            <div className="space-y-3">
+              {[1, 2, 3].map((i) => (
             <Skeleton key={i} className="h-40 sm:h-24 w-full bg-slate-800/50 rounded-2xl" />
-          ))}
-        </div>
-      )}
+              ))}
+            </div>
+          )}
 
       {/* Error State */}
-      {isError && (
+          {isError && (
         <Card className="glass-card border-red-500/20">
           <CardContent className="pt-6">
             <div className="text-center py-8">
@@ -135,10 +135,10 @@ export default function AdminWithdrawalsPage() {
             </div>
           </CardContent>
         </Card>
-      )}
+          )}
 
       {/* Empty State */}
-      {!isLoading && !isError && (!withdrawals || withdrawals.length === 0) && (
+          {!isLoading && !isError && (!withdrawals || withdrawals.length === 0) && (
         <Card className="glass-card">
           <CardContent className="pt-6">
             <div className="text-center py-12">
@@ -155,7 +155,7 @@ export default function AdminWithdrawalsPage() {
       )}
 
       {/* Desktop Table View */}
-      {!isLoading && !isError && withdrawals && withdrawals.length > 0 && (
+          {!isLoading && !isError && withdrawals && withdrawals.length > 0 && (
         <>
           <div className="hidden lg:block">
             <Card className="glass-card overflow-hidden">
@@ -184,9 +184,9 @@ export default function AdminWithdrawalsPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-800/30">
-                    {withdrawals.map((withdrawal) => (
+                {withdrawals.map((withdrawal) => (
                       <tr 
-                        key={withdrawal.id} 
+                    key={withdrawal.id}
                         className="hover:bg-slate-900/40 transition-colors"
                       >
                         <td className="px-4 py-4">
@@ -217,8 +217,8 @@ export default function AdminWithdrawalsPage() {
                                 <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
                               </svg>
                             )}
-                            {withdrawal.source}
-                          </span>
+                          {withdrawal.source}
+                        </span>
                         </td>
                         <td className="px-4 py-4">
                           <div className="flex flex-col gap-0.5">
@@ -249,7 +249,7 @@ export default function AdminWithdrawalsPage() {
                                 </svg>
                               </button>
                             )}
-                          </div>
+                      </div>
                         </td>
                         <td className="px-4 py-4">
                           <p className="text-sm text-slate-400">{formatDate(withdrawal.createdAt)}</p>
@@ -276,15 +276,15 @@ export default function AdminWithdrawalsPage() {
                                 ? 'Rejecting...'
                                 : 'Reject'}
                             </Button>
-                          </div>
+                      </div>
                         </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
-              </div>
+                      </div>
             </Card>
-          </div>
+                      </div>
 
           {/* Mobile Card View */}
           <div className="lg:hidden space-y-3">
@@ -373,21 +373,21 @@ export default function AdminWithdrawalsPage() {
                       onClick={() => approveMutation.mutate(withdrawal.id)}
                       disabled={approveMutation.isPending || rejectMutation.isPending}
                       className="h-10 rounded-lg text-xs font-semibold bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 transition-all"
-                    >
+                        >
                       {approveMutation.isPending && approveMutation.variables === withdrawal.id
                         ? 'Approving...'
                         : '✓ Approve'}
-                    </Button>
-                    <Button
-                      onClick={() => rejectMutation.mutate(withdrawal.id)}
+                        </Button>
+                        <Button
+                          onClick={() => rejectMutation.mutate(withdrawal.id)}
                       disabled={approveMutation.isPending || rejectMutation.isPending}
                       className="h-10 rounded-lg text-xs font-medium bg-red-500/10 hover:bg-red-500/20 text-red-300 border border-red-500/30 transition-all"
-                    >
+                        >
                       {rejectMutation.isPending && rejectMutation.variables === withdrawal.id
                         ? 'Rejecting...'
                         : '✕ Reject'}
-                    </Button>
-                  </div>
+                        </Button>
+                      </div>
                 </CardContent>
               </Card>
             ))}
@@ -407,15 +407,15 @@ export default function AdminWithdrawalsPage() {
               Total: <span className="font-semibold text-slate-300">{allWithdrawals.length}</span> withdrawals
             </span>
           )}
-        </div>
+                    </div>
 
         {/* Loading */}
         {allWithdrawalsLoading && (
           <div className="space-y-3">
             {[1, 2, 3].map((i) => (
               <Skeleton key={i} className="h-24 w-full bg-slate-800/50 rounded-2xl" />
-            ))}
-          </div>
+                  ))}
+                </div>
         )}
 
         {/* Empty State */}
@@ -578,8 +578,8 @@ export default function AdminWithdrawalsPage() {
                         <div>Processed: {formatDate(withdrawal.processedAt)}</div>
                       )}
                     </div>
-                  </CardContent>
-                </Card>
+        </CardContent>
+      </Card>
               ))}
             </div>
           </>

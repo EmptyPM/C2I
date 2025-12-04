@@ -108,16 +108,16 @@ export default function AdminUsersPage() {
       </div>
 
       {/* Loading State */}
-      {isLoading && (
-        <div className="space-y-3">
-          {[1, 2, 3, 4, 5].map((i) => (
+          {isLoading && (
+            <div className="space-y-3">
+              {[1, 2, 3, 4, 5].map((i) => (
             <Skeleton key={i} className="h-32 sm:h-20 w-full bg-slate-800/50 rounded-2xl" />
-          ))}
-        </div>
-      )}
+              ))}
+            </div>
+          )}
 
       {/* Error State */}
-      {isError && (
+          {isError && (
         <Card className="glass-card border-red-500/20">
           <CardContent className="pt-6">
             <div className="text-center py-8">
@@ -134,7 +134,7 @@ export default function AdminUsersPage() {
       )}
 
       {/* Empty State */}
-      {!isLoading && !isError && (!users || users.length === 0) && (
+          {!isLoading && !isError && (!users || users.length === 0) && (
         <Card className="glass-card">
           <CardContent className="pt-6">
             <div className="text-center py-12">
@@ -151,7 +151,7 @@ export default function AdminUsersPage() {
       )}
 
       {/* Desktop Table View (hidden on mobile) */}
-      {!isLoading && !isError && users && users.length > 0 && (
+          {!isLoading && !isError && users && users.length > 0 && (
         <>
           <div className="hidden lg:block">
             <Card className="glass-card overflow-hidden">
@@ -180,11 +180,11 @@ export default function AdminUsersPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-800/30">
-                    {users.map((user) => (
+                {users.map((user) => (
                       <tr 
-                        key={user.id} 
+                    key={user.id}
                         className="hover:bg-slate-900/40 transition-colors"
-                      >
+                  >
                         <td className="px-4 py-4">
                           <div className="flex items-center gap-3">
                             <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-sky-500/20 to-blue-600/20 border border-sky-500/30">
@@ -192,7 +192,7 @@ export default function AdminUsersPage() {
                                 {user.email[0].toUpperCase()}
                               </span>
                             </div>
-                            <div>
+                      <div>
                               <p className="text-sm font-medium text-slate-50">{user.email}</p>
                               <p className="text-xs text-slate-500">
                                 {user.firstName || user.lastName
@@ -321,22 +321,22 @@ export default function AdminUsersPage() {
                         ? 'bg-amber-500/10 text-amber-300 border border-amber-500/30' 
                         : 'bg-slate-700/50 text-slate-300 border border-slate-600/30'
                     }`}>
-                      {user.role}
-                    </span>
-                  </div>
+                          {user.role}
+                        </span>
+                      </div>
 
                   {/* Status Badges */}
                   <div className="flex flex-wrap gap-2 mb-4">
                     <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${
-                      user.status === 'ACTIVE' 
+                            user.status === 'ACTIVE'
                         ? 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/30' 
                         : 'bg-red-500/10 text-red-300 border border-red-500/30'
                     }`}>
                       <span className={`w-1.5 h-1.5 rounded-full ${
                         user.status === 'ACTIVE' ? 'bg-emerald-400' : 'bg-red-400'
                       }`} />
-                      {user.status}
-                    </span>
+                          {user.status}
+                        </span>
                     {user.isFrozen && (
                       <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-500/10 text-amber-300 border border-amber-500/30">
                         <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
@@ -358,54 +358,54 @@ export default function AdminUsersPage() {
                     <div className="bg-slate-900/40 rounded-lg p-2 border border-slate-800/50">
                       <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-0.5">Trading</p>
                       <p className="text-sm font-semibold text-slate-200 font-mono">{formatBalance(user.tradingBalance)}</p>
-                    </div>
+                      </div>
                     <div className="bg-slate-900/40 rounded-lg p-2 border border-slate-800/50">
                       <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-0.5">Profit</p>
                       <p className="text-sm font-semibold text-[#4fd1ff] font-mono">{formatBalance(user.profitBalance)}</p>
-                    </div>
+                      </div>
                     <div className="bg-slate-900/40 rounded-lg p-2 border border-slate-800/50">
                       <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-0.5">Referral</p>
                       <p className="text-sm font-semibold text-[#ffb020] font-mono">{formatBalance(user.referralBalance)}</p>
-                    </div>
-                  </div>
+                      </div>
+                      </div>
 
                   {/* Action Buttons */}
                   <div className="grid grid-cols-3 gap-2">
-                    <Button
-                      onClick={() => handleBanUnban(user)}
-                      disabled={banUnbanMutation.isPending}
+                        <Button
+                          onClick={() => handleBanUnban(user)}
+                          disabled={banUnbanMutation.isPending}
                       size="sm"
                       className={`h-9 rounded-lg text-xs font-medium transition-all ${
                         user.status === 'ACTIVE'
                           ? 'bg-red-500/10 hover:bg-red-500/20 text-red-300 border border-red-500/30'
                           : 'bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
                       }`}
-                    >
-                      {user.status === 'ACTIVE' ? 'Ban' : 'Unban'}
-                    </Button>
-                    <Button
-                      onClick={() => handleFreezeUnfreeze(user)}
-                      disabled={freezeUnfreezeMutation.isPending}
+                        >
+                          {user.status === 'ACTIVE' ? 'Ban' : 'Unban'}
+                        </Button>
+                        <Button
+                          onClick={() => handleFreezeUnfreeze(user)}
+                          disabled={freezeUnfreezeMutation.isPending}
                       size="sm"
                       className="h-9 rounded-lg text-xs font-medium bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 transition-all"
-                    >
-                      {user.isFrozen ? 'Unfreeze' : 'Freeze'}
-                    </Button>
-                    <Button
-                      onClick={() => handleChangeRole(user)}
-                      disabled={changeRoleMutation.isPending}
+                        >
+                          {user.isFrozen ? 'Unfreeze' : 'Freeze'}
+                        </Button>
+                        <Button
+                          onClick={() => handleChangeRole(user)}
+                          disabled={changeRoleMutation.isPending}
                       size="sm"
                       className="h-9 rounded-lg text-xs font-medium bg-sky-500/10 hover:bg-sky-500/20 text-sky-300 border border-sky-500/30 transition-all"
-                    >
-                      {user.role === 'USER' ? 'Make Admin' : 'Make User'}
-                    </Button>
-                  </div>
+                        >
+                          {user.role === 'USER' ? 'Make Admin' : 'Make User'}
+                        </Button>
+                      </div>
                 </CardContent>
               </Card>
-            ))}
-          </div>
+                  ))}
+                </div>
         </>
-      )}
+          )}
     </main>
   );
 }
