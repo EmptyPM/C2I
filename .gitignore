@@ -1,0 +1,24 @@
+# Node
+node_modules/
+
+# Env files
+**/.env
+**/.env.local
+
+# Next.js build
+frontend/.next/
+frontend/out/
+
+# NestJS build
+backend/dist/
+
+# SQLite dev DB
+backend/prisma/dev.db
+backend/prisma/dev.db-journal
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+

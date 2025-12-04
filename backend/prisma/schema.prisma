@@ -1,0 +1,122 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                  Int               @id @default(autoincrement())
+  email               String            @unique
+  passwordHash        String
+  firstName           String?
+  lastName            String?
+  referralCode        String            @unique
+  referredById        Int?
+  referredBy          User?             @relation("UserReferrals", fields: [referredById], references: [id])
+  referrals           User[]            @relation("UserReferrals")
+  role                String            @default("USER")
+  status              String            @default("ACTIVE")
+  tradingBalance      Decimal           @default(0)
+  profitBalance       Decimal           @default(0)
+  referralBalance     Decimal           @default(0)
+  isFrozen            Boolean           @default(false)
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+  deposits            Deposit[]
+  withdrawals         Withdrawal[]
+  profitLogs          ProfitLog[]
+  referralBonuses     ReferralBonus[]   @relation("ReferralBonusReceiver")
+  referralSources     ReferralBonus[]   @relation("ReferralBonusSource")
+  reinvestments       Reinvestment[]
+  passwordResetTokens PasswordResetToken[]
+  walletTransfers     WalletTransfer[]
+}
+
+model Deposit {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amount     Decimal
+  txHash     String
+  status     String   @default("PENDING")
+  createdAt  DateTime @default(now())
+  approvedAt DateTime?
+}
+
+model Withdrawal {
+  id            Int       @id @default(autoincrement())
+  userId        Int
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amount        Decimal
+  fee           Decimal
+  netAmount     Decimal
+  source        String
+  walletAddress String?
+  status        String    @default("PENDING")
+  createdAt     DateTime  @default(now())
+  processedAt   DateTime?
+}
+
+model ProfitLog {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amount     Decimal
+  percentage Float
+  note       String?
+  createdAt  DateTime @default(now())
+}
+
+model ReferralBonus {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  user       User     @relation("ReferralBonusReceiver", fields: [userId], references: [id], onDelete: Cascade)
+  fromUserId Int
+  fromUser   User     @relation("ReferralBonusSource", fields: [fromUserId], references: [id], onDelete: Cascade)
+  amount     Decimal
+  createdAt  DateTime @default(now())
+}
+
+model Reinvestment {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amount     Decimal
+  source     String
+  createdAt  DateTime @default(now())
+}
+
+model PasswordResetToken {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token     String   @unique
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model ProfitRun {
+  id             Int      @id @default(autoincrement())
+  runDate        DateTime @unique
+  triggeredBy    String
+  processedUsers Int
+  totalProfit    Decimal  @default(0)
+  createdAt      DateTime @default(now())
+}
+
+model WalletTransfer {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  from      String   // 'REFERRAL' | 'PROFIT'
+  to        String   // 'PROFIT' | 'TRADING'
+  amount    Decimal
+  createdAt DateTime @default(now())
+}
