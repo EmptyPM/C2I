@@ -45,4 +45,10 @@ export class UsersController {
   ) {
     return this.usersService.changePassword(user.userId, dto);
   }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('me/profit-logs')
+  async getMyProfitLogs(@CurrentUser() user: any) {
+    return this.usersService.getProfitLogs(user.userId);
+  }
 }

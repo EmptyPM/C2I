@@ -213,4 +213,18 @@ export class UsersService {
       referralBalance: referralTotal,
     };
   }
+
+  async getProfitLogs(userId: number) {
+    return this.prisma.profitLog.findMany({
+      where: { userId },
+      orderBy: { createdAt: 'desc' },
+      select: {
+        id: true,
+        amount: true,
+        percentage: true,
+        note: true,
+        createdAt: true,
+      },
+    });
+  }
 }

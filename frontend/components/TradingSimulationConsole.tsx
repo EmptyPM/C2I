@@ -116,8 +116,14 @@ export function TradingSimulationConsole() {
 
   useEffect(() => {
     if (containerRef.current) {
-      containerRef.current.scrollTop =
-        containerRef.current.scrollHeight;
+      const container = containerRef.current;
+      const isNearBottom = 
+        container.scrollHeight - container.scrollTop - container.clientHeight < 50;
+      
+      // Only auto-scroll if user is already near the bottom
+      if (isNearBottom) {
+        container.scrollTop = container.scrollHeight;
+      }
     }
   }, [lines]);
 

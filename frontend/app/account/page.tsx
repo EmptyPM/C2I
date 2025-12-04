@@ -80,6 +80,14 @@ type WalletTransfer = {
   createdAt: string;
 };
 
+type ProfitLog = {
+  id: number;
+  amount: number;
+  percentage: number;
+  note: string | null;
+  createdAt: string;
+};
+
 function formatWalletLabel(w: WalletName) {
   if (w === "TRADING") return "Trading";
   if (w === "PROFIT") return "Profit";
@@ -432,6 +440,16 @@ export default function AccountPage() {
         fromWallet: t.from,
         toWallet: t.to,
       }));
+    },
+    staleTime: 0,
+    refetchOnMount: "always",
+  });
+
+  const profitLogsQuery = useQuery<ProfitLog[]>({
+    queryKey: ["profitLogs"],
+    queryFn: async () => {
+      const res = await api.get("/users/me/profit-logs");
+      return res.data;
     },
     staleTime: 0,
     refetchOnMount: "always",
@@ -1400,91 +1418,140 @@ export default function AccountPage() {
                     Transactions History
                   </h2>
                   <p className="text-[11px] text-slate-500">
-                    Internal moves between Referral, Profit and Trading wallets.
+                    Internal wallet transfers and daily profit generations.
                   </p>
                 </div>
 
-                {walletTransfersQuery.isLoading ? (
-                  <p className="text-xs text-slate-400">Loading transfers…</p>
-                ) : !walletTransfersQuery.data ||
-                  walletTransfersQuery.data.length === 0 ? (
-                  <p className="text-xs text-slate-400">No transfers yet.</p>
-                ) : (
-                  <>
-                    {/* Mobile: Card layout */}
-                    <div className="block sm:hidden space-y-2">
-                      {walletTransfersQuery.data.map((t) => (
-                        <div
-                          key={t.id}
-                          className="rounded-xl border border-slate-800 bg-slate-950/40 p-3 space-y-2"
-                        >
-                          <div className="flex items-center justify-between">
-                            <span className="inline-flex items-center rounded-full border border-slate-700 bg-slate-900/80 px-2 py-1 text-[9px] uppercase tracking-wide text-slate-200">
-                              {(t.fromWallet || "UNKNOWN").toLowerCase()}{" "}
-                              <span className="mx-1 text-slate-500">→</span>
-                              {(t.toWallet || "UNKNOWN").toLowerCase()}
-                            </span>
-                            <span className="text-sky-300 font-medium text-xs">
-                              {Number(t.amount).toFixed(2)} USDT
-                            </span>
-                          </div>
-                          <div className="text-[10px] text-slate-400">
-                            {t.createdAt ? new Date(t.createdAt).toLocaleString() : "N/A"}
-                          </div>
-                          {t.description && (
-                            <div className="text-[10px] text-slate-300">
-                              {t.description}
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Desktop: Table layout */}
-                    <div className="hidden sm:block overflow-x-auto rounded-2xl border border-slate-800 bg-slate-950/40">
-                      <table className="min-w-full text-[11px] md:text-xs">
-                        <thead>
-                          <tr className="border-b border-slate-800/80 bg-slate-900/70">
-                            <th className="px-3 py-2 text-left font-normal text-slate-400">Date</th>
-                            <th className="px-3 py-2 text-left font-normal text-slate-400">Transfer</th>
-                            <th className="px-3 py-2 text-right font-normal text-slate-400">Amount</th>
-                            <th className="px-3 py-2 text-left font-normal text-slate-400">Description</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {walletTransfersQuery.data.map((t) => (
-                            <tr
-                              key={t.id}
-                              className="border-b border-slate-900/70 last:border-none"
+                {walletTransfersQuery.isLoading || profitLogsQuery.isLoading ? (
+                  <p className="text-xs text-slate-400">Loading transactions…</p>
+                ) : (() => {
+                    // Merge wallet transfers and profit logs
+                    const transfers = walletTransfersQuery.data || [];
+                    const profits = profitLogsQuery.data || [];
+                    
+                    // Create unified transaction list
+                    type Transaction = {
+                      id: string;
+                      type: "transfer" | "profit";
+                      date: Date;
+                      dateString: string;
+                      amount: number;
+                      description: string;
+                      badge: string;
+                    };
+                    
+                    const transactions: Transaction[] = [
+                      ...transfers.map((t) => ({
+                        id: `transfer-${t.id}`,
+                        type: "transfer" as const,
+                        date: new Date(t.createdAt),
+                        dateString: t.createdAt,
+                        amount: Number(t.amount),
+                        description: t.description || `${formatWalletLabel(t.fromWallet || "TRADING")} → ${formatWalletLabel(t.toWallet || "TRADING")}`,
+                        badge: `${(t.fromWallet || "UNKNOWN").toLowerCase()} → ${(t.toWallet || "UNKNOWN").toLowerCase()}`,
+                      })),
+                      ...profits.map((p) => ({
+                        id: `profit-${p.id}`,
+                        type: "profit" as const,
+                        date: new Date(p.createdAt),
+                        dateString: p.createdAt,
+                        amount: Number(p.amount),
+                        description: p.note || `Daily profit generation (${p.percentage}%)`,
+                        badge: "daily profit",
+                      })),
+                    ];
+                    
+                    // Sort by date descending (newest first)
+                    transactions.sort((a, b) => b.date.getTime() - a.date.getTime());
+                    
+                    if (transactions.length === 0) {
+                      return <p className="text-xs text-slate-400">No transactions yet.</p>;
+                    }
+                    
+                    return (
+                      <>
+                        {/* Mobile: Card layout */}
+                        <div className="block sm:hidden space-y-2">
+                          {transactions.map((tx) => (
+                            <div
+                              key={tx.id}
+                              className="rounded-xl border border-slate-800 bg-slate-950/40 p-3 space-y-2"
                             >
-                              <td className="px-3 py-2 align-middle text-slate-300 whitespace-nowrap">
-                                {t.createdAt ? new Date(t.createdAt).toLocaleString() : "N/A"}
-                              </td>
-                              <td className="px-3 py-2 align-middle whitespace-nowrap">
-                                <span className="inline-flex items-center rounded-full border border-slate-700 bg-slate-900/80 px-2 py-[3px] text-[10px] uppercase tracking-wide text-slate-200">
-                                  {(t.fromWallet || "UNKNOWN").toLowerCase()}{" "}
-                                  <span className="mx-1 text-slate-500">→</span>
-                                  {(t.toWallet || "UNKNOWN").toLowerCase()}
+                              <div className="flex items-center justify-between">
+                                <span className={cn(
+                                  "inline-flex items-center rounded-full border px-2 py-1 text-[9px] uppercase tracking-wide",
+                                  tx.type === "profit"
+                                    ? "border-emerald-700 bg-emerald-900/30 text-emerald-300"
+                                    : "border-slate-700 bg-slate-900/80 text-slate-200"
+                                )}>
+                                  {tx.badge}
                                 </span>
-                              </td>
-                              <td className="px-3 py-2 align-middle text-right whitespace-nowrap">
-                                <span className="text-sky-300 font-medium">
-                                  {Number(t.amount).toFixed(2)} USDT
+                                <span className={cn(
+                                  "font-medium text-xs",
+                                  tx.type === "profit" ? "text-emerald-400" : "text-sky-300"
+                                )}>
+                                  +{tx.amount.toFixed(2)} USDT
                                 </span>
-                              </td>
-                              <td className="px-3 py-2 align-middle text-left text-[11px] text-slate-400">
-                                {t.description ||
-                                  `${formatWalletLabel(
-                                    t.fromWallet || "TRADING"
-                                  )} → ${formatWalletLabel(t.toWallet || "TRADING")}`}
-                              </td>
-                            </tr>
+                              </div>
+                              <div className="text-[10px] text-slate-400">
+                                {new Date(tx.dateString).toLocaleString()}
+                              </div>
+                              <div className="text-[10px] text-slate-300">
+                                {tx.description}
+                              </div>
+                            </div>
                           ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </>
-                )}
+                        </div>
+
+                        {/* Desktop: Table layout */}
+                        <div className="hidden sm:block overflow-x-auto rounded-2xl border border-slate-800 bg-slate-950/40">
+                          <table className="min-w-full text-[11px] md:text-xs">
+                            <thead>
+                              <tr className="border-b border-slate-800/80 bg-slate-900/70">
+                                <th className="px-3 py-2 text-left font-normal text-slate-400">Date</th>
+                                <th className="px-3 py-2 text-left font-normal text-slate-400">Type</th>
+                                <th className="px-3 py-2 text-right font-normal text-slate-400">Amount</th>
+                                <th className="px-3 py-2 text-left font-normal text-slate-400">Description</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {transactions.map((tx) => (
+                                <tr
+                                  key={tx.id}
+                                  className="border-b border-slate-900/70 last:border-none"
+                                >
+                                  <td className="px-3 py-2 align-middle text-slate-300 whitespace-nowrap">
+                                    {new Date(tx.dateString).toLocaleString()}
+                                  </td>
+                                  <td className="px-3 py-2 align-middle whitespace-nowrap">
+                                    <span className={cn(
+                                      "inline-flex items-center rounded-full border px-2 py-[3px] text-[10px] uppercase tracking-wide",
+                                      tx.type === "profit"
+                                        ? "border-emerald-700 bg-emerald-900/30 text-emerald-300"
+                                        : "border-slate-700 bg-slate-900/80 text-slate-200"
+                                    )}>
+                                      {tx.badge}
+                                    </span>
+                                  </td>
+                                  <td className="px-3 py-2 align-middle text-right whitespace-nowrap">
+                                    <span className={cn(
+                                      "font-medium",
+                                      tx.type === "profit" ? "text-emerald-400" : "text-sky-300"
+                                    )}>
+                                      +{tx.amount.toFixed(2)} USDT
+                                    </span>
+                                  </td>
+                                  <td className="px-3 py-2 align-middle text-left text-[11px] text-slate-400">
+                                    {tx.description}
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </>
+                    );
+                  })()}
               </div>
           )}
         </CardContent>
