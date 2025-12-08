@@ -432,49 +432,70 @@ export default function DashboardPage() {
           {/* Top row: balances + quick stats */}
           <section className="space-y-4">
             <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-            <Card className="glass-card">
-              <CardHeader className="pb-2 px-4 sm:px-6">
-                <p className="text-[10px] sm:text-xs uppercase tracking-[0.2em] text-slate-500">
-                  Trading Balance
-                </p>
+            <Card className="glass-card rounded-2xl border border-slate-800/50 bg-gradient-to-br from-slate-900/90 via-slate-950/90 to-slate-900/90 backdrop-blur-sm shadow-xl hover:shadow-2xl transition-all duration-300">
+              <CardHeader className="pb-3 px-5 sm:px-6 pt-5">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
+                    <svg className="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                  </div>
+                  <p className="text-[10px] sm:text-xs uppercase tracking-[0.2em] text-slate-400 font-medium">
+                    Trading Balance
+                  </p>
+                </div>
               </CardHeader>
-              <CardContent className="px-4 sm:px-6">
-                <p className="text-xl sm:text-2xl font-semibold text-slate-50">
-                  {formatUSDT(user.tradingBalance)} <span className="text-[10px] sm:text-xs text-slate-400">USDT</span>
+              <CardContent className="px-5 sm:px-6 pb-5">
+                <p className="text-2xl sm:text-3xl font-bold text-slate-50 tracking-tight mb-2">
+                  {formatUSDT(user.tradingBalance)} <span className="text-sm font-semibold text-slate-400">USDT</span>
                 </p>
-                <p className="mt-2 text-[10px] sm:text-xs text-slate-400">
+                <p className="text-[11px] text-slate-500 leading-relaxed">
                   Funds allocated for trades.
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="glass-card">
-              <CardHeader className="pb-2 px-4 sm:px-6">
-                <p className="text-[10px] sm:text-xs uppercase tracking-[0.2em] text-slate-500">
-                  Profit Wallet
-                </p>
+            <Card className="glass-card rounded-2xl border border-slate-800/50 bg-gradient-to-br from-slate-900/90 via-slate-950/90 to-slate-900/90 backdrop-blur-sm shadow-xl hover:shadow-2xl transition-all duration-300">
+              <CardHeader className="pb-3 px-5 sm:px-6 pt-5">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center">
+                    <svg className="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                    </svg>
+                  </div>
+                  <p className="text-[10px] sm:text-xs uppercase tracking-[0.2em] text-slate-400 font-medium">
+                    Profit Wallet
+                  </p>
+                </div>
               </CardHeader>
-              <CardContent className="px-4 sm:px-6">
-                <p className="text-xl sm:text-2xl font-semibold text-[#4fd1ff]">
-                  {formatUSDT(user.profitBalance)} <span className="text-[10px] sm:text-xs text-slate-400">USDT</span>
+              <CardContent className="px-5 sm:px-6 pb-5">
+                <p className="text-2xl sm:text-3xl font-bold text-[#4fd1ff] tracking-tight mb-2">
+                  {formatUSDT(user.profitBalance)} <span className="text-sm font-semibold text-slate-400">USDT</span>
                 </p>
-                <p className="text-[10px] sm:text-xs text-slate-400 mt-2">
+                <p className="text-[11px] text-slate-500 leading-relaxed">
                   Daily returns ready to withdraw.
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="glass-card sm:col-span-2 md:col-span-1">
-              <CardHeader className="pb-2 px-4 sm:px-6">
-                <p className="text-[10px] sm:text-xs uppercase tracking-[0.2em] text-slate-500">
-                  Referral Wallet
-                </p>
+            <Card className="glass-card sm:col-span-2 md:col-span-1 rounded-2xl border border-slate-800/50 bg-gradient-to-br from-slate-900/90 via-slate-950/90 to-slate-900/90 backdrop-blur-sm shadow-xl hover:shadow-2xl transition-all duration-300">
+              <CardHeader className="pb-3 px-5 sm:px-6 pt-5">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
+                    <svg className="w-6 h-6 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                  </div>
+                  <p className="text-[10px] sm:text-xs uppercase tracking-[0.2em] text-slate-400 font-medium">
+                    Referral Wallet
+                  </p>
+                </div>
               </CardHeader>
-              <CardContent className="px-4 sm:px-6">
-                <p className="text-xl sm:text-2xl font-semibold text-[#ffb020]">
-                  {formatUSDT(user.referralBalance)} <span className="text-[10px] sm:text-xs text-slate-400">USDT</span>
+              <CardContent className="px-5 sm:px-6 pb-5">
+                <p className="text-2xl sm:text-3xl font-bold text-[#ffb020] tracking-tight mb-2">
+                  {formatUSDT(user.referralBalance)} <span className="text-sm font-semibold text-slate-400">USDT</span>
                 </p>
-                <p className="text-[10px] sm:text-xs text-slate-400 mt-2">
+                <p className="text-[11px] text-slate-500 leading-relaxed">
                   Bonuses earned from your network.
                 </p>
               </CardContent>
@@ -490,17 +511,27 @@ export default function DashboardPage() {
               <LiveDailyProfit tradingBalance={Number(user?.tradingBalance || 0)} />
 
               {/* Active Users card */}
-              <div className="glass-card rounded-2xl border border-slate-800 bg-slate-950/70 px-4 py-3">
-                <div className="flex items-center justify-between mb-1">
-                  <p className="text-[11px] uppercase tracking-wide text-slate-400">
-                    Active Users
-                  </p>
-                <div className="inline-flex items-center rounded-full bg-slate-900/80 px-2.5 sm:px-3 py-1 text-[10px] sm:text-xs text-slate-300 border border-slate-700/60">
-                  <span className="mr-1 h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                  Live
+              <div className="glass-card rounded-2xl border border-slate-800/50 bg-gradient-to-br from-slate-900/90 via-slate-950/90 to-slate-900/90 backdrop-blur-sm px-5 py-4 shadow-xl hover:shadow-2xl transition-all duration-300 relative overflow-hidden">
+                <div className="flex items-start justify-between mb-3 relative z-10">
+                  <div className="flex items-center gap-2">
+                    {/* Person icon */}
+                    <div className="w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center">
+                      <svg className="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-[11px] uppercase tracking-wider text-slate-400 font-medium">
+                        Active Users
+                      </p>
+                    </div>
+                  </div>
+                  <div className="inline-flex items-center rounded-full bg-emerald-500/10 px-2.5 py-1 text-[10px] font-medium text-emerald-300 border border-emerald-500/20">
+                    <span className="mr-1.5 h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(74,222,128,0.8)]" />
+                    Live
                   </div>
                 </div>
-                <p className="mt-1 text-2xl font-semibold text-sky-300">
+                <p className="text-2xl sm:text-3xl font-bold text-sky-300 tracking-tight relative z-10">
                   {getSimulatedUserCount().toLocaleString()}
                 </p>
               </div>
@@ -510,7 +541,10 @@ export default function DashboardPage() {
             </div>
 
             {/* Live Trading Console */}
-              <TradingSimulationConsole />
+            <div className="grid gap-3 sm:gap-4 grid-cols-1 md:grid-cols-2">
+              <TradingSimulationConsole allowedPairs={["EUR/USD", "USD/JPY", "GBP/USD"]} title="Live Trading Console (Currencies)" />
+              <TradingSimulationConsole allowedPairs={["XAU/USD"]} title="Live Trading Console (Gold)" />
+            </div>
           </section>
 
           {/* Bot Programs Teaser Section */}

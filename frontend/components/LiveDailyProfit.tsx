@@ -99,20 +99,22 @@ export const LiveDailyProfit: React.FC<Props> = ({ tradingBalance }) => {
 
   if (hasNoBalance) {
     return (
-      <div className="rounded-2xl border border-slate-800 bg-slate-900/80 px-4 py-3 flex items-center justify-between gap-3">
-        <div>
-          <p className="text-xs text-slate-400">Today&apos;s live profit</p>
-          <p className="text-lg font-semibold text-sky-300">
-            0.00 <span className="text-xs text-slate-400">USDT</span>
-          </p>
-          <p className="text-[11px] text-slate-500 mt-1">
-            You need to deposit money to start earning profits
-          </p>
+      <div className="glass-card rounded-2xl border border-slate-800/50 bg-gradient-to-br from-slate-900/90 via-slate-950/90 to-slate-900/90 backdrop-blur-sm px-5 py-4 shadow-xl">
+        <div className="flex items-start justify-between mb-3">
+          <div>
+            <p className="text-[11px] uppercase tracking-wider text-slate-400 font-medium mb-2">Today&apos;s Live Profit</p>
+            <p className="text-2xl sm:text-3xl font-bold text-slate-500 mb-1 tracking-tight">
+              0.00 <span className="text-sm font-semibold text-slate-400">USDT</span>
+            </p>
+          </div>
+          <div className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-slate-800/50 border border-slate-700/50">
+            <span className="h-2 w-2 rounded-full bg-slate-500" />
+            <span className="text-[10px] font-medium text-slate-400">Pending</span>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <span className="h-2 w-2 rounded-full bg-slate-500" />
-          <span className="text-[11px] text-slate-400">Pending</span>
-        </div>
+        <p className="text-[10px] text-slate-500 leading-relaxed">
+          You need to deposit money to start earning profits
+        </p>
       </div>
     );
   }
@@ -126,37 +128,52 @@ export const LiveDailyProfit: React.FC<Props> = ({ tradingBalance }) => {
   }
 
   const formatted = value.toFixed(4);
+  const progress = targetProfit > 0 ? Math.min((value / targetProfit) * 100, 100) : 0;
 
   return (
-    <div className="rounded-2xl border border-slate-800 bg-slate-900/80 px-4 py-3 flex items-center justify-between gap-3">
-      <div>
-        <p className="text-xs text-slate-400">Today&apos;s live profit</p>
-        <p className="text-lg font-semibold text-sky-300">
-          {formatted} <span className="text-xs text-slate-400">USDT</span>
-        </p>
-        <p className="text-[11px] text-slate-500 mt-1">
-          Target for today: {(targetProfit || 0).toFixed(4)} USDT ({(rate * 100).toFixed(1)}
-          % of your trading balance)
-        </p>
+    <div className="glass-card rounded-2xl border border-slate-800/50 bg-gradient-to-br from-slate-900/90 via-slate-950/90 to-slate-900/90 backdrop-blur-sm px-5 py-4 shadow-xl hover:shadow-2xl transition-all duration-300">
+      <div className="flex items-start justify-between mb-3">
+        <div>
+          <p className="text-[11px] uppercase tracking-wider text-slate-400 font-medium mb-2">Today&apos;s Live Profit</p>
+          <p className="text-2xl sm:text-3xl font-bold text-emerald-400 mb-1 tracking-tight">
+            {formatted} <span className="text-sm font-semibold text-slate-400">USDT</span>
+          </p>
+        </div>
+        <div className="flex flex-col items-end gap-1.5">
+          <div className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+            <span
+              className={
+                direction === "up"
+                  ? "h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(74,222,128,0.8)] animate-pulse"
+                  : direction === "down"
+                  ? "h-2 w-2 rounded-full bg-red-400 shadow-[0_0_8px_rgba(248,113,113,0.8)]"
+                  : "h-2 w-2 rounded-full bg-slate-500"
+              }
+            />
+            <span className="text-[10px] font-medium text-emerald-300">
+              {direction === "up"
+                ? "Ticking up"
+                : direction === "down"
+                ? "Ticking down"
+                : "Stable"}
+            </span>
+          </div>
+        </div>
       </div>
-      <div className="flex items-center gap-2">
-        <span
-          className={
-            direction === "up"
-              ? "h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(74,222,128,0.9)]"
-              : direction === "down"
-              ? "h-2 w-2 rounded-full bg-red-400 shadow-[0_0_12px_rgba(248,113,113,0.9)]"
-              : "h-2 w-2 rounded-full bg-slate-500"
-          }
-        />
-        <span className="text-[11px] text-slate-400">
-          {direction === "up"
-            ? "Ticking up"
-            : direction === "down"
-            ? "Ticking down"
-            : "Stable"}
-        </span>
+      
+      {/* Progress Bar */}
+      <div className="mb-3">
+        <div className="h-2 bg-slate-800/50 rounded-full overflow-hidden backdrop-blur-sm">
+          <div 
+            className="h-full bg-gradient-to-r from-emerald-500 via-emerald-400 to-emerald-500 rounded-full transition-all duration-500 ease-out shadow-[0_0_10px_rgba(74,222,128,0.5)]"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
       </div>
+      
+      <p className="text-[10px] text-slate-500 leading-relaxed">
+        Target for today: <span className="text-slate-400 font-medium">{(targetProfit || 0).toFixed(4)} USDT</span> ({(rate * 100).toFixed(1)}% of your trading balance)
+      </p>
     </div>
   );
 };
