@@ -135,31 +135,31 @@ export function TradingSimulationConsole({ allowedPairs = PAIRS, title = "Live T
 
   return (
     <div className="glass-card rounded-2xl border border-slate-800/50 bg-gradient-to-br from-slate-900/90 via-slate-950/90 to-slate-900/90 backdrop-blur-sm shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden">
-      <div className="flex items-center justify-between px-5 pt-4 pb-3 border-b border-slate-800/50">
-        <p className="text-xs font-bold text-slate-200 uppercase tracking-wider">
+      <div className="flex items-center justify-between px-3 sm:px-5 pt-3 sm:pt-4 pb-2 sm:pb-3 border-b border-slate-800/50">
+        <p className="text-[10px] sm:text-xs font-bold text-slate-200 uppercase tracking-wider truncate pr-2">
           {title}
         </p>
 
         {isWeekend() ? (
-          <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-rose-500/10 border border-rose-500/20 text-[10px] font-medium text-rose-400">
-            <span className="h-2 w-2 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(248,113,113,0.9)]" />
-            Paused
+          <span className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full bg-rose-500/10 border border-rose-500/20 text-[9px] sm:text-[10px] font-medium text-rose-400 shrink-0">
+            <span className="h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(248,113,113,0.9)]" />
+            <span className="hidden sm:inline">Paused</span>
           </span>
         ) : (
-          <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[10px] font-medium text-emerald-300">
-            <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.9)] animate-pulse" />
-            Live
+          <span className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[9px] sm:text-[10px] font-medium text-emerald-300 shrink-0">
+            <span className="h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.9)] animate-pulse" />
+            <span className="hidden sm:inline">Live</span>
           </span>
         )}
       </div>
 
       <div
         ref={containerRef}
-        className="px-5 pb-4 pt-3 h-56 overflow-y-auto font-mono text-[11px] bg-gradient-to-b from-slate-950/50 to-black/40 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+        className="px-2 sm:px-5 pb-3 sm:pb-4 pt-2 sm:pt-3 h-48 sm:h-56 overflow-x-auto overflow-y-auto font-mono text-[9px] sm:text-[11px] bg-gradient-to-b from-slate-950/50 to-black/40 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
       >
         {isWeekend() ? (
-          <div className="text-slate-500 text-center pt-12 text-xs leading-relaxed">
-            <div className="mb-2 text-2xl">📊</div>
+          <div className="text-slate-500 text-center pt-8 sm:pt-12 text-[10px] sm:text-xs leading-relaxed px-2">
+            <div className="mb-2 text-xl sm:text-2xl">📊</div>
             Market closed. No trading activity is running at the moment. 
             <br />
             <span className="text-slate-600">(Saturday & Sunday)</span>
@@ -168,33 +168,28 @@ export function TradingSimulationConsole({ allowedPairs = PAIRS, title = "Live T
           lines.map((t) => (
             <div
               key={t.id}
-              className="flex items-center gap-3 text-[11px] leading-relaxed py-1.5 px-2 rounded-lg hover:bg-slate-800/30 transition-colors duration-150"
+              className="flex items-center gap-1.5 sm:gap-3 text-[9px] sm:text-[11px] leading-relaxed py-1 sm:py-1.5 px-1.5 sm:px-2 rounded-lg hover:bg-slate-800/30 transition-colors duration-150 min-w-max"
             >
-              <span className="text-slate-500 w-[52px] font-medium">{t.timestamp}</span>
-
-              <span className="text-slate-100 w-[70px] font-semibold">{t.pair}</span>
-
+              <span className="text-slate-500 w-[52px] font-medium shrink-0">{t.timestamp}</span>
+              <span className="text-slate-100 w-[70px] font-semibold shrink-0">{t.pair}</span>
               <span
                 className={
                   t.side === "BUY"
-                    ? "text-emerald-400 w-[34px] font-bold"
-                    : "text-orange-400 w-[34px] font-bold"
+                    ? "text-emerald-400 w-[34px] font-bold shrink-0"
+                    : "text-orange-400 w-[34px] font-bold shrink-0"
                 }
               >
                 {t.side}
               </span>
-
-              <span className="text-slate-400 w-[60px]">
+              <span className="text-slate-400 w-[60px] shrink-0">
                 {t.lotSize.toFixed(2)} <span className="text-slate-600">lot</span>
               </span>
-
-              <span className="text-slate-400 w-[80px]">
+              <span className="text-slate-400 w-[80px] shrink-0">
                 {t.margin.toFixed(2)} <span className="text-slate-600">$</span>
               </span>
-
               <span
                 className={
-                  "w-[60px] text-right font-semibold " +
+                  "w-[60px] text-right font-semibold shrink-0 " +
                   (t.isWin ? "text-sky-400" : "text-rose-400")
                 }
               >

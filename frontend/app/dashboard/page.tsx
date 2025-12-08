@@ -156,6 +156,14 @@ export default function DashboardPage() {
 
   const { data: user, isLoading, isError } = useCurrentUser();
 
+  // Redirect to login if user query fails (invalid token, expired, etc.)
+  useEffect(() => {
+    if (isClient && hasToken && isError && !isLoading) {
+      localStorage.removeItem('accessToken');
+      router.push('/login');
+    }
+  }, [isClient, hasToken, isError, isLoading, router]);
+
   const {
     data: deposits,
     isLoading: depositsLoading,
