@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, FormEvent } from 'react';
+import { useState, useEffect, FormEvent, ChangeEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api-client';
@@ -49,7 +49,21 @@ export default function WithdrawalsPage() {
 
   const [amount, setAmount] = useState('');
   const [source, setSource] = useState<'PROFIT' | 'REFERRAL'>('PROFIT');
+  const [walletAddress, setWalletAddress] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [walletAddressError, setWalletAddressError] = useState<string | null>(null);
+
+  // TRC20 address validation function
+  const validateTRC20Address = (address: string): boolean => {
+    if (!address || !address.trim()) {
+      return false;
+    }
+    const trimmed = address.trim();
+    // TRC20 addresses start with 'T' and are exactly 34 characters long
+    // They use base58 encoding (alphanumeric, excluding 0, O, I, l)
+    const trc20Pattern = /^T[1-9A-HJ-NP-Za-km-z]{33}$/;
+    return trc20Pattern.test(trimmed);
+  };
 
   useEffect(() => {
     setMounted(true);
@@ -69,13 +83,15 @@ export default function WithdrawalsPage() {
   });
 
   const createWithdrawalMutation = useMutation({
-    mutationFn: async (data: { amount: number; source: 'PROFIT' | 'REFERRAL' }) => {
+    mutationFn: async (data: { amount: number; source: 'PROFIT' | 'REFERRAL'; walletAddress: string }) => {
       const res = await api.post('/withdrawals', data);
       return res.data as Withdrawal;
     },
     onSuccess: () => {
       setAmount('');
+      setWalletAddress('');
       setError(null);
+      setWalletAddressError(null);
       queryClient.invalidateQueries({ queryKey: ['myWithdrawals'] });
       queryClient.invalidateQueries({ queryKey: ['currentUser'] });
     },
@@ -87,15 +103,29 @@ export default function WithdrawalsPage() {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
+    setWalletAddressError(null);
 
     const amountNum = parseFloat(amount);
-    if (isNaN(amountNum) || amountNum < 1) {
-      setError('Amount must be at least 1 USDT');
+    if (isNaN(amountNum) || amountNum < 10) {
+      setError('Amount must be at least 10 USDT');
       return;
     }
 
     if (!user) {
       setError('You must be logged in to withdraw');
+      return;
+    }
+
+    if (!walletAddress.trim()) {
+      setError('Wallet address is required');
+      setWalletAddressError('Please enter your TRC20 wallet address.');
+      return;
+    }
+
+    // Validate TRC20 address format
+    if (!validateTRC20Address(walletAddress)) {
+      setError('Invalid TRC20 wallet address format.');
+      setWalletAddressError("TRC20 addresses must start with 'T' and be 34 characters long.");
       return;
     }
 
@@ -113,7 +143,20 @@ export default function WithdrawalsPage() {
     createWithdrawalMutation.mutate({
       amount: amountNum,
       source,
+      walletAddress: walletAddress.trim(),
     });
+  };
+
+  const handleWalletAddressChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setWalletAddress(value);
+    setWalletAddressError(null);
+    setError(null);
+    
+    // Real-time validation feedback
+    if (value.trim() && !validateTRC20Address(value)) {
+      setWalletAddressError('Invalid TRC20 address format');
+    }
   };
 
   const availableProfitBalance = user
@@ -202,7 +245,7 @@ export default function WithdrawalsPage() {
                       id="amount"
                       type="number"
                       step="0.01"
-                      min="1"
+                      min="10"
                       value={amount}
                       onChange={(e) => setAmount(e.target.value)}
                       required
@@ -210,11 +253,71 @@ export default function WithdrawalsPage() {
                       placeholder="Enter amount to withdraw"
                     />
                     <p className="text-xs text-slate-400 mt-1">
-                      Minimum: 1 USDT. A 5% fee will be deducted.
+                      Minimum: 10 USDT. A 5% fee will be deducted.
                     </p>
                   </div>
 
-                  {amount && !isNaN(parseFloat(amount)) && parseFloat(amount) > 0 && (
+                  <div>
+                    <label
+                      htmlFor="walletAddress"
+                      className="block text-sm font-medium text-slate-300 mb-2"
+                    >
+                      Withdrawal Wallet Address <span className="text-slate-400 text-xs">(TRC20 USDT)</span>
+                    </label>
+                    <input
+                      id="walletAddress"
+                      type="text"
+                      value={walletAddress}
+                      onChange={handleWalletAddressChange}
+                      required
+                      className={`w-full px-4 py-2 bg-slate-800 border rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 transition-colors ${
+                        walletAddressError
+                          ? 'border-red-500 focus:ring-red-500'
+                          : walletAddress && validateTRC20Address(walletAddress)
+                          ? 'border-emerald-500 focus:ring-emerald-500'
+                          : 'border-slate-700 focus:ring-blue-500'
+                      }`}
+                      placeholder="Txxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                    />
+                    {walletAddressError && (
+                      <p className="text-xs text-red-400 mt-1 flex items-center gap-1">
+                        <svg className="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        {walletAddressError}
+                      </p>
+                    )}
+                    {walletAddress && validateTRC20Address(walletAddress) && !walletAddressError && (
+                      <p className="text-xs text-emerald-400 mt-1 flex items-center gap-1">
+                        <svg className="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Valid TRC20 address
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Instructions Card */}
+                  <div className="rounded-lg border border-blue-500/20 bg-blue-500/5 p-4 space-y-2">
+                    <div className="flex items-start gap-2">
+                      <svg className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <div className="flex-1 space-y-1.5">
+                        <p className="text-sm font-semibold text-blue-300">Important Instructions:</p>
+                        <ul className="text-xs text-slate-400 space-y-1 list-disc list-inside">
+                          <li>Only TRC20 (Tron) network addresses are supported</li>
+                          <li>Address must start with 'T' and be exactly 34 characters</li>
+                          <li>Double-check your address before submitting - transactions cannot be reversed</li>
+                          <li>Minimum withdrawal: 10 USDT</li>
+                          <li>A 5% processing fee will be deducted from your withdrawal amount</li>
+                          <li>Withdrawals are processed within 24-48 hours after approval</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                  {amount && !isNaN(parseFloat(amount)) && parseFloat(amount) >= 10 && (
                     <div className="p-3 bg-slate-800 rounded-lg space-y-1">
                       <div className="flex justify-between text-sm">
                         <span className="text-slate-400">Amount:</span>

@@ -264,6 +264,19 @@ export default function AccountPage() {
   const [withdrawWallet, setWithdrawWallet] = useState("");
   const [withdrawError, setWithdrawError] = useState<string | null>(null);
   const [withdrawMessage, setWithdrawMessage] = useState<string | null>(null);
+  const [walletAddressError, setWalletAddressError] = useState<string | null>(null);
+
+  // TRC20 address validation function
+  const validateTRC20Address = (address: string): boolean => {
+    if (!address || !address.trim()) {
+      return false;
+    }
+    const trimmed = address.trim();
+    // TRC20 addresses start with 'T' and are exactly 34 characters long
+    // They use base58 encoding (alphanumeric, excluding 0, O, I, l)
+    const trc20Pattern = /^T[1-9A-HJ-NP-Za-km-z]{33}$/;
+    return trc20Pattern.test(trimmed);
+  };
 
   const myWithdrawalsQuery = useQuery<Withdrawal[]>({
     queryKey: ["myWithdrawals"],
@@ -307,14 +320,24 @@ export default function AccountPage() {
     e.preventDefault();
     setWithdrawError(null);
     setWithdrawMessage(null);
+    setWalletAddressError(null);
 
     const amountNum = Number(withdrawAmount);
     if (!amountNum || isNaN(amountNum) || amountNum < 10) {
       setWithdrawError("Minimum withdrawal is 10 USDT.");
       return;
     }
+    
     if (!withdrawWallet.trim()) {
       setWithdrawError("Wallet address is required.");
+      setWalletAddressError("Please enter your TRC20 wallet address.");
+      return;
+    }
+
+    // Validate TRC20 address format
+    if (!validateTRC20Address(withdrawWallet)) {
+      setWithdrawError("Invalid TRC20 wallet address format.");
+      setWalletAddressError("TRC20 addresses must start with 'T' and be 34 characters long.");
       return;
     }
 
@@ -326,6 +349,18 @@ export default function AccountPage() {
     }
 
     createWithdrawalMutation.mutate();
+  };
+
+  const handleWalletAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setWithdrawWallet(value);
+    setWalletAddressError(null);
+    setWithdrawError(null);
+    
+    // Real-time validation feedback
+    if (value.trim() && !validateTRC20Address(value)) {
+      setWalletAddressError("Invalid TRC20 address format");
+    }
   };
 
   /* ------------------ REFERRAL TAB STATE ------------------ */
@@ -957,12 +992,53 @@ export default function AccountPage() {
                       <input
                         type="text"
                         value={withdrawWallet}
-                        onChange={(e) =>
-                          setWithdrawWallet(e.target.value)
-                        }
-                        className="w-full rounded-md border border-slate-700 bg-slate-900/80 px-3 py-2 text-sm text-white outline-none focus:border-sky-500"
-                        placeholder="Your TRC20 wallet address"
+                        onChange={handleWalletAddressChange}
+                        className={cn(
+                          "w-full rounded-md border bg-slate-900/80 px-3 py-2 text-sm text-white outline-none transition-colors",
+                          walletAddressError
+                            ? "border-red-500/50 focus:border-red-500"
+                            : withdrawWallet && validateTRC20Address(withdrawWallet)
+                            ? "border-emerald-500/50 focus:border-emerald-500"
+                            : "border-slate-700 focus:border-sky-500"
+                        )}
+                        placeholder="Txxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
                       />
+                      {walletAddressError && (
+                        <p className="text-[10px] sm:text-[11px] text-red-400 flex items-center gap-1">
+                          <svg className="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          {walletAddressError}
+                        </p>
+                      )}
+                      {withdrawWallet && validateTRC20Address(withdrawWallet) && !walletAddressError && (
+                        <p className="text-[10px] sm:text-[11px] text-emerald-400 flex items-center gap-1">
+                          <svg className="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          Valid TRC20 address
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Instructions Card */}
+                    <div className="rounded-lg border border-blue-500/20 bg-blue-500/5 p-3 space-y-2">
+                      <div className="flex items-start gap-2">
+                        <svg className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <div className="flex-1 space-y-1.5">
+                          <p className="text-[10px] sm:text-[11px] font-semibold text-blue-300">Important Instructions:</p>
+                          <ul className="text-[10px] sm:text-[11px] text-slate-400 space-y-1 list-disc list-inside">
+                            <li>Only TRC20 (Tron) network addresses are supported</li>
+                            <li>Address must start with 'T' and be exactly 34 characters</li>
+                            <li>Double-check your address before submitting - transactions cannot be reversed</li>
+                            <li>Minimum withdrawal: 10 USDT</li>
+                            <li>A 5% processing fee will be deducted from your withdrawal amount</li>
+                            <li>Withdrawals are processed within 24-48 hours after approval</li>
+                          </ul>
+                        </div>
+                      </div>
                     </div>
 
                     <p className="text-[10px] sm:text-[11px] text-slate-500">

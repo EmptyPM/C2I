@@ -204,3 +204,4 @@ export function TradingSimulationConsole({ allowedPairs = PAIRS, title = "Live T
     </div>
   );
 }
+
