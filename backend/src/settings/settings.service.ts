@@ -66,5 +66,27 @@ export class SettingsService {
       logoUrl: settings.logoUrl || null,
     };
   }
+
+  async updateHomeUrl(homeUrl: string) {
+    return this.prisma.settings.upsert({
+      where: { id: 1 },
+      update: {
+        homeUrl: homeUrl,
+      },
+      create: {
+        id: 1,
+        depositAddress: 'TRX2r4BUhMd22W8DtwNEajhRcgPJWBK4s7',
+        qrCodeUrl: null,
+        homeUrl: homeUrl,
+      },
+    });
+  }
+
+  async getHomeUrl() {
+    const settings = await this.getSettings();
+    return {
+      homeUrl: settings.homeUrl || '/',
+    };
+  }
 }
 

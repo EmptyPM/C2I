@@ -73,5 +73,17 @@ export class SettingsController {
   async getLogo() {
     return this.settingsService.getLogo();
   }
+
+  @Get('home-url')
+  async getHomeUrl() {
+    return this.settingsService.getHomeUrl();
+  }
+
+  @Post('admin/update-home-url')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('ADMIN')
+  async updateHomeUrl(@Body() body: { homeUrl: string }) {
+    return this.settingsService.updateHomeUrl(body.homeUrl);
+  }
 }
 

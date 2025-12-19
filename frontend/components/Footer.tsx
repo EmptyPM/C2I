@@ -63,7 +63,7 @@ export default function Footer() {
           <div className="flex flex-col items-center justify-between gap-4 text-sm text-slate-400 md:flex-row">
             <p>&copy; {currentYear} Fynex. All rights reserved.</p>
             <p className="text-xs">
-              Trading cryptocurrencies carries risk. Past performance does not guarantee future results.
+              Start your journey to financial freedom today. Your future starts with smart investments.
             </p>
           </div>
         </div>

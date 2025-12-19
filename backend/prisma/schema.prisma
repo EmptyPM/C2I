@@ -126,4 +126,5 @@ model Settings {
   depositAddress String?
   qrCodeUrl      String?
   logoUrl        String?
+  homeUrl        String?
 }

@@ -3,11 +3,16 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PasswordInput } from "@/components/ui/password-input";
 import { api } from "@/lib/api-client";
+
+const fetchLogo = async (): Promise<{ logoUrl: string | null }> => {
+  const res = await api.get('/settings/logo');
+  return res.data;
+};
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -23,6 +28,11 @@ export default function RegisterPage() {
   const [referralCode, setReferralCode] = useState(refFromUrl);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const { data: logoData } = useQuery({
+    queryKey: ['platformLogo'],
+    queryFn: fetchLogo,
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,10 +77,39 @@ export default function RegisterPage() {
     <main className="min-h-screen flex items-center justify-center  px-4">
       <Card className="glass-card w-full max-w-md">
         <CardHeader className="space-y-1 pb-4">
-          <CardTitle className="text-xl font-semibold text-slate-50">
+          {/* Logo */}
+          <div className="flex justify-center mb-4">
+            {logoData?.logoUrl ? (
+              <img 
+                src={`http://localhost:4000${logoData.logoUrl}`}
+                alt="Platform Logo"
+                className="h-16 object-contain"
+              />
+            ) : (
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 rounded-full blur-xl"></div>
+                <div className="relative w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center border-2 border-blue-400/30">
+                  <svg
+                    className="w-10 h-10 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                </div>
+              </div>
+            )}
+          </div>
+          <CardTitle className="text-xl font-semibold text-slate-50 text-center">
             Create your account
           </CardTitle>
-          <CardDescription className="text-xs text-slate-400">
+          <CardDescription className="text-xs text-slate-400 text-center">
             Join the automated investment platform.
           </CardDescription>
         </CardHeader>

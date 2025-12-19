@@ -26,6 +26,11 @@ const fetchLogo = async (): Promise<{ logoUrl: string | null }> => {
   return res.data;
 };
 
+const fetchHomeUrl = async (): Promise<{ homeUrl: string }> => {
+  const res = await api.get('/settings/home-url');
+  return res.data;
+};
+
 export default function MainNavbar() {
   const router = useRouter();
   const pathname = usePathname();
@@ -35,7 +40,20 @@ export default function MainNavbar() {
     queryKey: ['platformLogo'],
     queryFn: fetchLogo,
   });
+  const { data: homeUrlData } = useQuery({
+    queryKey: ['homeUrl'],
+    queryFn: fetchHomeUrl,
+  });
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Check if homeUrl is external (starts with http:// or https://)
+  const isExternalUrl = (url: string | undefined) => {
+    if (!url) return false;
+    return url.startsWith('http://') || url.startsWith('https://');
+  };
+
+  const homeUrl = homeUrlData?.homeUrl || '/';
+  const isHomeExternal = isExternalUrl(homeUrl);
 
   const handleLogout = useCallback(() => {
     // same logic you had earlier for logout
@@ -74,50 +92,101 @@ export default function MainNavbar() {
       <header className="fixed inset-x-0 top-2 z-40">
         <div className="mx-auto flex h-14 items-center justify-between px-4 rounded-2xl border border-slate-800/70 bg-slate-950/90 backdrop-blur shadow-lg" style={{ maxWidth: '1280px' }}>
           {/* LEFT: logo */}
-          <Link href="/" className="flex items-center gap-2">
-            {/* Logo - Display uploaded logo or fallback to text logo */}
-            {logoData?.logoUrl ? (
-              <img 
-                src={`http://localhost:4000${logoData.logoUrl}`}
-                alt="Fynex Logo"
-                className="h-8 object-contain"
-              />
-            ) : (
-              <div className="flex items-center">
-                <span className="text-xl font-bold tracking-tight" style={{ 
-                  background: 'linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text'
-                }}>
-                  FYNEX
-                </span>
-                {/* Upward arrow accent */}
-                <svg 
-                  className="h-4 w-4 text-cyan-400 ml-0.5 -mt-1" 
-                  fill="currentColor" 
-                  viewBox="0 0 20 20"
-                >
-                  <path fillRule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clipRule="evenodd" />
-                </svg>
-              </div>
-            )}
-          </Link>
+          {isHomeExternal ? (
+            <a href={homeUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
+              {/* Logo - Display uploaded logo or fallback to text logo */}
+              {logoData?.logoUrl ? (
+                <img 
+                  src={`http://localhost:4000${logoData.logoUrl}`}
+                  alt="Fynex Logo"
+                  className="h-8 object-contain"
+                />
+              ) : (
+                <div className="flex items-center">
+                  <span className="text-xl font-bold tracking-tight" style={{ 
+                    background: 'linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text'
+                  }}>
+                    FYNEX
+                  </span>
+                  {/* Upward arrow accent */}
+                  <svg 
+                    className="h-4 w-4 text-cyan-400 ml-0.5 -mt-1" 
+                    fill="currentColor" 
+                    viewBox="0 0 20 20"
+                  >
+                    <path fillRule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                  </svg>
+                </div>
+              )}
+            </a>
+          ) : (
+            <Link href={homeUrl} className="flex items-center gap-2">
+              {/* Logo - Display uploaded logo or fallback to text logo */}
+              {logoData?.logoUrl ? (
+                <img 
+                  src={`http://localhost:4000${logoData.logoUrl}`}
+                  alt="Fynex Logo"
+                  className="h-8 object-contain"
+                />
+              ) : (
+                <div className="flex items-center">
+                  <span className="text-xl font-bold tracking-tight" style={{ 
+                    background: 'linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text'
+                  }}>
+                    FYNEX
+                  </span>
+                  {/* Upward arrow accent */}
+                  <svg 
+                    className="h-4 w-4 text-cyan-400 ml-0.5 -mt-1" 
+                    fill="currentColor" 
+                    viewBox="0 0 20 20"
+                  >
+                    <path fillRule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                  </svg>
+                </div>
+              )}
+            </Link>
+          )}
 
           {/* RIGHT: nav items + auth area */}
           <div className="flex items-center gap-3 md:gap-6">
             {/* Desktop nav items */}
             <nav className="hidden gap-3 text-xs text-slate-400 md:flex">
-              <Link
-                href="/"
-                className={
-                  pathname === "/"
-                    ? "text-sky-300"
-                    : "hover:text-slate-100"
-                }
-              >
-                Home
-              </Link>
+              {isHomeExternal ? (
+                <a
+                  href={homeUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-slate-100 transition-colors flex items-center gap-1.5 group"
+                  title={`External link: ${homeUrl}`}
+                >
+                  <span>Home</span>
+                  <svg className="w-3 h-3 opacity-60 group-hover:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                </a>
+              ) : (
+                <Link
+                  href={homeUrl}
+                  className={
+                    homeUrl === "/"
+                      ? pathname === "/"
+                        ? "text-sky-300"
+                        : "hover:text-slate-100"
+                      : pathname?.startsWith(homeUrl)
+                      ? "text-sky-300"
+                      : "hover:text-slate-100"
+                  }
+                >
+                  Home
+                </Link>
+              )}
               {user && (
                 <Link
                   href="/dashboard"
@@ -265,17 +334,37 @@ export default function MainNavbar() {
               <div className="rounded-2xl border border-slate-800/70 bg-slate-950/95 backdrop-blur shadow-xl overflow-hidden">
                 {/* Mobile Nav Links */}
                 <nav className="flex flex-col py-2">
-                  <Link
-                    href="/"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className={`px-4 py-3 text-sm font-medium transition-colors ${
-                      pathname === "/"
-                        ? "text-sky-300 bg-sky-500/10 border-l-2 border-sky-500"
-                        : "text-slate-300 hover:text-slate-100 hover:bg-slate-800/50"
-                    }`}
-                  >
-                    Home
-                  </Link>
+                  {isHomeExternal ? (
+                    <a
+                      href={homeUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="px-4 py-3 text-sm font-medium transition-colors text-slate-300 hover:text-slate-100 hover:bg-slate-800/50 flex items-center gap-2 group"
+                      title={`External link: ${homeUrl}`}
+                    >
+                      <span>Home</span>
+                      <svg className="w-3.5 h-3.5 opacity-60 group-hover:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                      </svg>
+                    </a>
+                  ) : (
+                    <Link
+                      href={homeUrl}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`px-4 py-3 text-sm font-medium transition-colors ${
+                        homeUrl === "/"
+                          ? pathname === "/"
+                            ? "text-sky-300 bg-sky-500/10 border-l-2 border-sky-500"
+                            : "text-slate-300 hover:text-slate-100 hover:bg-slate-800/50"
+                          : pathname?.startsWith(homeUrl)
+                          ? "text-sky-300 bg-sky-500/10 border-l-2 border-sky-500"
+                          : "text-slate-300 hover:text-slate-100 hover:bg-slate-800/50"
+                      }`}
+                    >
+                      Home
+                    </Link>
+                  )}
                   {user && (
                     <Link
                       href="/dashboard"
