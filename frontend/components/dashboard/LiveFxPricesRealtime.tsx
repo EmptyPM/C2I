@@ -61,34 +61,24 @@ export function LiveFxPricesRealtime() {
     socket.on("connect", () => {
       setConnected(true);
       setError(null);
-      console.log("WebSocket connected:", socket.id);
     });
 
-    socket.on("disconnect", (reason) => {
+    socket.on("disconnect", () => {
       setConnected(false);
-      console.log("WebSocket disconnected:", reason);
     });
 
     socket.on("connect_error", (err) => {
       setConnected(false);
       const errorMsg = err.message || "Failed to connect to WebSocket server";
       setError(`Connection error: ${errorMsg}`);
-      console.error("WebSocket connection error:", err);
-      console.error("Error details:", {
-        message: err.message,
-        type: err.type,
-        description: err.description,
-      });
     });
 
     socket.on("forex:update", (payload: ForexPayload) => {
       const updateTime = new Date();
-      console.log("Received forex update at", updateTime.toISOString(), ":", payload);
-      // Force update by creating completely new object with current timestamp
       setData({
         ...payload,
         timestamp: updateTime.toISOString(),
-        prices: payload.prices.map(p => ({ ...p })), // Deep copy prices array
+        prices: payload.prices.map(p => ({ ...p })),
       });
       setLastUpdateTime(updateTime);
       setError(null);
