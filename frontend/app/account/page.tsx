@@ -1035,7 +1035,7 @@ export default function AccountPage() {
                             <li>Double-check your address before submitting - transactions cannot be reversed</li>
                             <li>Minimum withdrawal: 10 USDT</li>
                             <li>A 5% processing fee will be deducted from your withdrawal amount</li>
-                            <li>Withdrawals are processed within 24-48 hours after approval</li>
+                            <li>Withdrawals are processed within 1 - 2 hours after approval</li>
                           </ul>
                         </div>
                       </div>

@@ -21,28 +21,135 @@
   <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-## Description
+# Backend - Crypto Investment Platform
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Backend API for the Crypto Investment Platform, built with [NestJS](https://nestjs.com/).
 
-## Project setup
+## 🚀 Getting Started
 
+### Prerequisites
+
+- Node.js (v18 or higher)
+- npm or yarn
+
+### Installation
+
+1. Install dependencies:
 ```bash
-$ npm install
+npm install
 ```
 
-## Compile and run the project
+2. Set up environment variables:
+   - Create a `.env` file in the backend directory
+   - Add the following variables:
+```env
+DATABASE_URL="file:./dev.db"
+JWT_SECRET="your-secret-key-here"
+PORT=4000
+```
+
+3. Set up the database:
+```bash
+# Generate Prisma Client
+npx prisma generate
+
+# Run database migrations
+npx prisma migrate dev
+```
+
+4. Start the development server:
+```bash
+# Development mode (with hot reload)
+npm run start:dev
+
+# Production mode
+npm run start:prod
+```
+
+The server will run on **http://localhost:4000**
+
+## 📝 Available Scripts
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm run start:dev      # Start development server with hot reload
+npm run start          # Start production server
+npm run start:prod     # Build and start production server
+npm run build          # Build the project
+npm run format         # Format code with Prettier
+npm run lint           # Lint code with ESLint
+npm run test           # Run unit tests
+npm run test:e2e       # Run end-to-end tests
+npm run test:cov       # Run tests with coverage
 ```
+
+## 🗄️ Database Management
+
+### Prisma Commands
+
+```bash
+# Generate Prisma Client
+npx prisma generate
+
+# Run migrations
+npx prisma migrate dev
+
+# Open Prisma Studio (database GUI)
+npx prisma studio
+
+# Reset database (⚠️ deletes all data)
+npx prisma migrate reset
+```
+
+## 🔧 Environment Variables
+
+Required environment variables in `.env`:
+
+- `DATABASE_URL` - SQLite database connection string (e.g., `file:./dev.db`)
+- `JWT_SECRET` - Secret key for JWT token encryption
+- `PORT` - Server port (default: 4000)
+
+## 📁 Project Structure
+
+```
+backend/
+├── src/
+│   ├── auth/           # Authentication module
+│   ├── users/          # User management
+│   ├── deposits/       # Deposit management
+│   ├── withdrawals/    # Withdrawal management
+│   ├── settings/       # Platform settings
+│   ├── profit-engine/  # Profit calculation engine
+│   └── ...
+├── prisma/
+│   ├── schema.prisma   # Database schema
+│   └── migrations/     # Database migrations
+└── test/               # Test files
+```
+
+## 🛠️ Tech Stack
+
+- **NestJS** - Progressive Node.js framework
+- **Prisma** - Modern database ORM
+- **SQLite** - Database
+- **JWT** - Authentication
+- **Socket.io** - Real-time WebSocket support
+- **bcrypt** - Password hashing
+- **TypeScript** - Type safety
+
+## 📡 API Endpoints
+
+The API is available at `http://localhost:4000/api`
+
+### Main Endpoints:
+- `POST /api/auth/register` - User registration
+- `POST /api/auth/login` - User login
+- `GET /api/users/me` - Get current user
+- `GET /api/deposits/my` - Get user deposits
+- `POST /api/withdrawals` - Create withdrawal
+- `GET /api/admin/*` - Admin endpoints (requires ADMIN role)
+- `GET /api/settings/*` - Platform settings
+
+For more information about the full project, see the root [README.md](../README.md).
 
 ## Run tests
 

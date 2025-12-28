@@ -124,34 +124,34 @@ export default function MainNavbar() {
             </a>
           ) : (
             <Link href={homeUrl} className="flex items-center gap-2">
-              {/* Logo - Display uploaded logo or fallback to text logo */}
-              {logoData?.logoUrl ? (
-                <img 
-                  src={`http://localhost:4000${logoData.logoUrl}`}
-                  alt="Fynex Logo"
-                  className="h-8 object-contain"
-                />
-              ) : (
-                <div className="flex items-center">
-                  <span className="text-xl font-bold tracking-tight" style={{ 
-                    background: 'linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text'
-                  }}>
-                    FYNEX
-                  </span>
-                  {/* Upward arrow accent */}
-                  <svg 
-                    className="h-4 w-4 text-cyan-400 ml-0.5 -mt-1" 
-                    fill="currentColor" 
-                    viewBox="0 0 20 20"
-                  >
-                    <path fillRule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clipRule="evenodd" />
-                  </svg>
-                </div>
-              )}
-            </Link>
+            {/* Logo - Display uploaded logo or fallback to text logo */}
+            {logoData?.logoUrl ? (
+              <img 
+                src={`http://localhost:4000${logoData.logoUrl}`}
+                alt="Fynex Logo"
+                className="h-8 object-contain"
+              />
+            ) : (
+              <div className="flex items-center">
+                <span className="text-xl font-bold tracking-tight" style={{ 
+                  background: 'linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text'
+                }}>
+                  FYNEX
+                </span>
+                {/* Upward arrow accent */}
+                <svg 
+                  className="h-4 w-4 text-cyan-400 ml-0.5 -mt-1" 
+                  fill="currentColor" 
+                  viewBox="0 0 20 20"
+                >
+                  <path fillRule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                </svg>
+              </div>
+            )}
+          </Link>
           )}
 
           {/* RIGHT: nav items + auth area */}
@@ -172,20 +172,20 @@ export default function MainNavbar() {
                   </svg>
                 </a>
               ) : (
-                <Link
+              <Link
                   href={homeUrl}
-                  className={
+                className={
                     homeUrl === "/"
                       ? pathname === "/"
                         ? "text-sky-300"
                         : "hover:text-slate-100"
                       : pathname?.startsWith(homeUrl)
-                      ? "text-sky-300"
-                      : "hover:text-slate-100"
-                  }
-                >
-                  Home
-                </Link>
+                    ? "text-sky-300"
+                    : "hover:text-slate-100"
+                }
+              >
+                Home
+              </Link>
               )}
               {user && (
                 <Link
@@ -349,21 +349,21 @@ export default function MainNavbar() {
                       </svg>
                     </a>
                   ) : (
-                    <Link
+                  <Link
                       href={homeUrl}
-                      onClick={() => setMobileMenuOpen(false)}
-                      className={`px-4 py-3 text-sm font-medium transition-colors ${
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`px-4 py-3 text-sm font-medium transition-colors ${
                         homeUrl === "/"
                           ? pathname === "/"
                             ? "text-sky-300 bg-sky-500/10 border-l-2 border-sky-500"
                             : "text-slate-300 hover:text-slate-100 hover:bg-slate-800/50"
                           : pathname?.startsWith(homeUrl)
-                          ? "text-sky-300 bg-sky-500/10 border-l-2 border-sky-500"
-                          : "text-slate-300 hover:text-slate-100 hover:bg-slate-800/50"
-                      }`}
-                    >
-                      Home
-                    </Link>
+                        ? "text-sky-300 bg-sky-500/10 border-l-2 border-sky-500"
+                        : "text-slate-300 hover:text-slate-100 hover:bg-slate-800/50"
+                    }`}
+                  >
+                    Home
+                  </Link>
                   )}
                   {user && (
                     <Link
