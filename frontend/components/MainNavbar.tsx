@@ -56,7 +56,6 @@ export default function MainNavbar() {
   const isHomeExternal = isExternalUrl(homeUrl);
 
   const handleLogout = useCallback(() => {
-    // same logic you had earlier for logout
     localStorage.removeItem("accessToken");
     queryClient.clear();
     router.push("/login");
@@ -64,11 +63,6 @@ export default function MainNavbar() {
   }, [queryClient, router]);
 
   const isAdmin = user?.role === "ADMIN";
-
-  const displayName =
-    user?.firstName && user.firstName.trim().length > 0
-      ? `${user.firstName}${user.lastName && user.lastName.trim().length > 0 ? ` ${user.lastName}` : ""}`
-      : user?.email?.split("@")[0] || "User";
 
   // Close mobile menu when route changes
   useEffect(() => {
